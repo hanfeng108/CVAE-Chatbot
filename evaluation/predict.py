@@ -69,7 +69,7 @@ def cli_main():
     parser.add_argument("--seed", default=0, type=int, help="random seed")
     parser.add_argument("--device", default='cuda' if torch.cuda.is_available() else 'cpu', type=str)
     parser.add_argument("--z_dim", default=200, help="dim of z")
-    parser.add_argument("--checkpoint_path", default="", help="path to load model checkpoint")
+    parser.add_argument("--checkpoint_path", default="./checkpoints/checkpoint2.pt", help="path to load model checkpoint")
     parser.add_argument("--model_type", type=str, default="decoder",
                         help="decoder, cvae_memory, cvae_embedding, compressed_decoder or compressed_cvae")
     args = parser.parse_args()
