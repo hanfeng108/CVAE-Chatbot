@@ -68,6 +68,70 @@ class DataPreprocessor:
             data += self.split_dialog(dialog)
             return data
 
+    def parse_data_celebrity(self, data_path):
+        """
+        :param data_path: path to raw dataset file
+        :return: List[{'persona': List[str],
+                       'context': List[str],
+                       'name': str,
+                       'topic': str,
+                       'response': str}]
+        """
+        self.logger.info("parsing dialogs from file")
+        # get name
+        with open(data_path, 'r', encoding='utf-8') as fin:
+            names = []
+            for line in tqdm(fin):
+                if len(line) == 0:
+                    continue
+                if len(line.split('：')) > 1 and 1 < len(line.split('：')[0]) < 6 and line.split('：')[0] not in names:
+                    names.append(line.split('：')[0])
+
+        with open(data_path, 'r', encoding='utf-8') as fin:
+            data = []
+
+            # topic = []
+            dialog = {"persona": [], "dialog": []}
+            for line in tqdm(fin):
+                line = line.strip()
+                if len(line) == 0:
+                    continue
+
+                # line_content = line
+
+                if line.split()[0] in names:
+
+                    name = line.split()[0]
+                    topic = line.split()[1]
+                    # last_name = ''
+                    # dialog_temp = ''
+                    dialog_interviewer = ''
+                    last_name = ''
+                    dialog_response = ''
+                    if len(dialog["persona"]):
+
+                        # start line of a new dialog
+                        # process previous dialog
+                        data += self.split_dialog(dialog)
+                        # record new dialog
+                        dialog = {"persona": [], "dialog": []}
+
+
+                if line.split('，')[0] in names:  # persona line, 将来可以在线爬取数据
+                    dialog["persona"].append(name + ';' + topic + ';' + line.replace(name + "：", ''))
+                elif line.split('：')[0] in names:  # utterance line
+                    new_name = line.split('：')[0]
+                    if line.split('：')[0] == '采访者':
+                        dialog_interviewer = line.split('：')[1]
+                    else:
+                        dialog_response = line.split('：')[1]
+
+                        dialog["dialog"] += [dialog_interviewer, dialog_response]
+                    last_name = line.split('：')[0]
+            # process last dialog
+            data += self.split_dialog(dialog)
+            return data
+
     def split_dialog(self, dialog):
         """
         split a single multi-turn dialog into several single-turn dialogs

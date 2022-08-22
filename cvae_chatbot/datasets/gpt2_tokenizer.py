@@ -5,6 +5,7 @@
 # @Description :
 
 from transformers import GPT2Tokenizer
+from transformers import BertTokenizer
 from cvae_chatbot.datasets.base_tokenizer import BaseTokenizer
 
 ATTR_TO_SPECIAL_TOKEN = {'bos_token': '<bos>', 'eos_token': '<eos>', 'pad_token': '<pad>',
@@ -17,12 +18,12 @@ class GPT2Vocab(BaseTokenizer):
 
     def __init__(self, model_path):
         super(GPT2Vocab, self).__init__()
-        self.tokenizer = GPT2Tokenizer.from_pretrained(model_path)
+        self.tokenizer = BertTokenizer.from_pretrained(model_path)
         self._add_special_tokens()
 
     def _add_special_tokens(self):
         """ Add special tokens to the tokenizer and the model if they have not already been added. """
-        orig_num_tokens = len(self.tokenizer.encoder)
+        # orig_num_tokens = len(self.tokenizer.encoder)
         num_added_tokens = self.tokenizer.add_special_tokens(ATTR_TO_SPECIAL_TOKEN)
         self.special_tokens = SPECIAL_TOKENS
 

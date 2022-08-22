@@ -12,7 +12,7 @@ def main(args):
     preprocessor = DataPreprocessor(vocab_path=args.gpt2_vocab_path)
 
     # load data
-    json_data = preprocessor.parse_data(data_path=args.raw_data)
+    json_data = preprocessor.parse_data_celebrity(data_path=args.raw_data)
 
     # tokenize and index data
     vocab = GPT2Vocab(model_path=args.gpt2_vocab_path)
@@ -23,14 +23,14 @@ def main(args):
 
 def cli_main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--raw_data", default="/home/Parlai/data/ConvAI2/train_self_original_no_cands.txt",
+    parser.add_argument("--raw_data", default="../datasets/Celebrity_train.txt",
                         help="path to raw dataset file"
                         )
     parser.add_argument("--cache_data",
-                        default="./datasets/train_self_original_no_cands.cache",
+                        default="../datasets/train_self_original_no_cands.cache",
                         help="path to save json format dataset")
     parser.add_argument("--gpt2_vocab_path",
-                        default="./gpt2/tokenizer",
+                        default="../gpt2/tokenizer",
                         help="path to GPT2 tokenizer vocab file")
 
     args = parser.parse_args()

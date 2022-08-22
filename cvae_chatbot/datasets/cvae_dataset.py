@@ -56,6 +56,7 @@ class CVAEDataset(Dataset):
         persona = list(chain(*dialog['persona']))
         response = dialog["response"]
 
+        persona_sim = persona[:250]
         input_ids = persona + input_ids + [vocab.speaker2_id] + response
         type_ids = [vocab.speaker2_id] * len(persona) + type_ids + [vocab.speaker2_id] * (len(response) + 1)
 
@@ -66,7 +67,10 @@ class CVAEDataset(Dataset):
             input_ids = [vocab.bos_id] + input_ids[-(max_seq_len - 2):] + [vocab.eos_id]
             type_ids = [vocab.speaker2_id] + type_ids[-(max_seq_len - 2):] + [vocab.speaker2_id]
         # ground truth label of each token, pad_token not included in loss
-        labels = [vocab.pad_id] * (len(input_ids) - len(response) - 1) + dialog["response"] + [vocab.eos_id]
+        if len(input_ids) - len(response) > 1:
+            labels = [vocab.pad_id] * (len(input_ids) - len(response) - 1) + dialog["response"] + [vocab.eos_id]
+        else:
+            labels = dialog["response"][-(max_seq_len - 1):] + [vocab.eos_id]
         assert len(labels) == len(input_ids)
         assert len(input_ids) == len(type_ids)
 
